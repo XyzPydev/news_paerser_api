@@ -21,6 +21,13 @@ from app.services.truth_scraper import run_truth_scraper
 
 logger = logging.getLogger(__name__)
 
+# Configure logging based on settings
+logging.basicConfig(
+    level=get_settings().log_level.upper(),
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    handlers=[logging.StreamHandler()],
+)
+
 
 async def redis_pubsub_listener(stop_event: asyncio.Event) -> None:
     """
