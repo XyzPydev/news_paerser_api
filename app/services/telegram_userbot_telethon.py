@@ -15,9 +15,13 @@ def get_telethon_session_name(base_session_name: str) -> str:
     return f"{base_session_name}-telethon"
 
 
+import os
+
 def create_telethon_client(settings: Settings) -> TelegramClient:
+    os.makedirs("app/sessions", exist_ok=True)
+    session_path = os.path.join("app/sessions", get_telethon_session_name(settings.telegram_session_name))
     return TelegramClient(
-        get_telethon_session_name(settings.telegram_session_name),
+        session_path,
         settings.telegram_api_id,
         settings.telegram_api_hash,
         device_model="Windows PC",

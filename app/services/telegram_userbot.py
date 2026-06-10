@@ -16,12 +16,15 @@ def get_pyrogram_session_name(base_session_name: str) -> str:
     return f"{base_session_name}-pyrogram"
 
 
+import os
+
 def create_userbot_client(settings: Settings) -> Client:
+    os.makedirs("app/sessions", exist_ok=True)
     return Client(
         get_pyrogram_session_name(settings.telegram_session_name),
         api_id=settings.telegram_api_id,
         api_hash=settings.telegram_api_hash,
-        workdir=".",
+        workdir="app/sessions",
     )
 
 
