@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Parser Dashboard — Real-time Trading Feed</title>
+    <meta name="description" content="Real-time low-latency news scraper dashboard powered by FastAPI, Redis Pub/Sub and WebSockets. Live Telegram and Truth Social news with sentiment analysis.">
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="app.css">
+</head>
+<body>
+    <div class="stars-overlay"></div>
+    <div class="glow-bg"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header animate-fade-in">
+            <div class="brand">
+                <div class="logo-wrapper">
+                    <i class="fa-solid fa-satellite-dish pulse-icon"></i>
+                </div>
+                <div>
+                    <h1>News Parser API</h1>
+                    <p class="subtitle">Real-time Global News Crawler &amp; Translation Pipeline</p>
+                </div>
+            </div>
+            <div class="status-panel">
+                <!-- WebSocket Status Indicator -->
+                <div class="auto-refresh-badge" id="ws-indicator">
+                    <span class="indicator-dot offline" id="ws-dot"></span>
+                    <span id="refresh-text">Connecting...</span>
+                </div>
+                <button id="refresh-btn" class="btn btn-icon btn-glass" title="Refresh Now">
+                    <i class="fa-solid fa-rotate"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Stats Section -->
+        <section class="stats-grid animate-fade-in" style="animation-delay: 0.1s;">
+            <div class="stat-card glass-card">
+                <div class="stat-icon-wrapper blue">
+                    <i class="fa-solid fa-newspaper"></i>
+                </div>
+                <div class="stat-details">
+                    <span class="stat-label">Total Scraped</span>
+                    <span class="stat-value" id="stat-total">0</span>
+                </div>
+            </div>
+            <div class="stat-card glass-card">
+                <div class="stat-icon-wrapper telegram-color">
+                    <i class="fa-brands fa-telegram"></i>
+                </div>
+                <div class="stat-details">
+                    <span class="stat-label">Telegram Articles</span>
+                    <span class="stat-value" id="stat-telegram">0</span>
+                </div>
+            </div>
+            <div class="stat-card glass-card">
+                <div class="stat-icon-wrapper language-color">
+                    <i class="fa-solid fa-language"></i>
+                </div>
+                <div class="stat-details">
+                    <span class="stat-label">Languages Tracked</span>
+                    <span class="stat-value" id="stat-languages">0</span>
+                </div>
+            </div>
+            <div class="stat-card glass-card">
+                <div class="stat-icon-wrapper media-color">
+                    <i class="fa-solid fa-photo-film"></i>
+                </div>
+                <div class="stat-details">
+                    <span class="stat-label">With Media</span>
+                    <span class="stat-value" id="stat-media">0</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Filters & Search Section -->
+        <section class="controls-bar glass-card animate-fade-in" style="animation-delay: 0.2s;">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" id="search-input" placeholder="Search news, channels, translations...">
+            </div>
+            <div class="filters">
+                <div class="select-wrapper">
+                    <i class="fa-solid fa-filter select-icon"></i>
+                    <select id="source-filter">
+                        <option value="">All Sources</option>
+                        <option value="telegram">Telegram</option>
+                        <option value="truth">Truth Social</option>
+                    </select>
+                </div>
+                <div class="select-wrapper">
+                    <i class="fa-solid fa-globe select-icon"></i>
+                    <select id="lang-filter">
+                        <option value="">All Languages</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- News Grid -->
+            <div class="news-container" id="news-container">
+                <!-- Skeleton cards loaded by default -->
+                <div class="skeleton-card glass-card"></div>
+                <div class="skeleton-card glass-card"></div>
+                <div class="skeleton-card glass-card"></div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination animate-fade-in" id="pagination">
+                <button class="btn btn-glass" id="prev-btn" disabled>
+                    <i class="fa-solid fa-chevron-left"></i> Previous
+                </button>
+                <span class="page-info" id="page-info">Page 1 of 1</span>
+                <button class="btn btn-glass" id="next-btn" disabled>
+                    Next <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer animate-fade-in" style="animation-delay: 0.4s;">
+            <p>News Parser Dashboard &bull; Powered by FastAPI, Redis Pub/Sub &amp; WebSockets</p>
+        </footer>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast">
+        <i class="fa-solid fa-circle-check" id="toast-icon"></i>
+        <span id="toast-message">New article parsed!</span>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

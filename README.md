@@ -17,6 +17,13 @@ uv sync
 uv run uvicorn app.main:app --reload
 ```
 
+For local scripts outside Docker, use a local Redis URL:
+
+```powershell
+$env:REDIS_URL="redis://localhost:6379/0"
+uv run python scripts/parse_tasnim_latest.py
+```
+
 ## Docker
 
 ```powershell

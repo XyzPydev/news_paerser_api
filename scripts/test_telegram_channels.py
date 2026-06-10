@@ -1,8 +1,11 @@
 import asyncio
 
-from telethon import TelegramClient
-
 from app.common.config import get_settings
+from app.services.telegram_userbot import (
+    create_userbot_client,
+    get_pyrogram_session_name,
+    normalize_channels,
+)
 
 
 async def main() -> None:
@@ -11,25 +14,24 @@ async def main() -> None:
     if not channels:
         raise RuntimeError("Set TELEGRAM_CHANNELS in .env first")
 
-    client = TelegramClient(
-        settings.telegram_session_name,
-        settings.telegram_api_id,
-        settings.telegram_api_hash,
-    )
+    channels = normalize_channels(channels)
+    session_name = get_pyrogram_session_name(settings.telegram_session_name)
+    client = create_userbot_client(settings)
 
     await client.connect()
     try:
-        if not await client.is_user_authorized():
+        me = await client.get_me()
+        if me is None:
             raise RuntimeError(
-                "Telegram session is not authorized. Run scripts/telegram_login.py first"
+                f"Telegram session {session_name}.session is not authorized. "
+                "Run scripts/telegram_login.py first"
             )
 
         print(f"Testing {len(channels)} channel(s)")
         for channel in channels:
-            entity = await client.get_entity(channel)
-            title = getattr(entity, "title", channel)
-            messages = await client.get_messages(entity, limit=3)
-            print(f"{channel}: resolved as {title!r}, latest_messages={len(messages)}")
+            chat = await client.get_chat(channel)
+            messages = [message async for message in client.get_chat_history(chat.id, limit=3)]
+            print(f"{channel}: resolved as {chat.title!r}, latest_messages={len(messages)}")
     finally:
         await client.disconnect()
 
